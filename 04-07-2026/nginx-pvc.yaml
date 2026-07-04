@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: nginx-pvc
+  namespace: default
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  storageClassName: nginx-sc
+  resources: 
+    requests: 
+      storage: 10Gi

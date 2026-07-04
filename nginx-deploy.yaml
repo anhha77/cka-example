@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: nginx
+  namespace: default
+  labels: 
+    app: nginx
+spec: 
+  replicas: 2
+  selector: 
+    matchLabels: 
+      app: nginx
+  template: 
+    metadata: 
+      labels: 
+        app: nginx
+    spec: 
+      containers: 
+        - name: nginx
+          image: nginxdemos/hello:0.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: nginx-legacy
+  namespace: default
+  labels: 
+    app: nginx-legacy
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: nginx-legacy
+  template: 
+    metadata: 
+      labels: 
+        app: nginx-legacy
+    spec: 
+      containers: 
+        - name: nginx-legacy
+          image: nginx:1.27
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx-legacy
+  namespace: default
+  labels: 
+    app: nginx-legacy
+spec: 
+  ports: 
+    - name: http
+      port: 80
+      targetPort: 80
+  selector: 
+    app: nginx-legacy
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx 
+  namespace: default
+  labels: 
+    app: nginx 
+spec: 
+  ports: 
+    - name: http
+      port: 80
+      targetPort: 80
+  selector: 
+    app: nginx
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1 
+kind: Ingress 
+metadata: 
+  name: nginx
+  namespace: default 
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec: 
+  ingressClassName: "nginx"
+  rules: 
+    - host: nginx.local.com
+      http: 
+        paths: 
+          - path: /
+            pathType: Prefix
+            backend: 
+              service: 
+                name: nginx
+                port: 
+                  number: 80
+          - path: /nginx-legacy
+            pathType: Prefix
+            backend: 
+              service: 
+                name: nginx-legacy
+                port: 
+                  number: 80
+  
+    
