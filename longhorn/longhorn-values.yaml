@@ -1,0 +1,24 @@
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 2
+  defaultFsType: ext4
+  reclaimPolicy: Delete
+
+defaultSettings:
+  defaultDataPath: /var/lib/longhorn
+  defaultReplicaCount: 2
+  storageOverProvisioningPercentage: 200
+  storageMinimalAvailablePercentage: 25
+  createDefaultDiskLabeledNodes: false
+  replicaSoftAntiAffinity: disabled
+  replicaAutoBalance: best-effort
+
+longhornUI:
+  replicas: 1
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: anhhm-longhorn.kbuor.tech
+  tls: true
+  tlsSecret: longhorn-tls

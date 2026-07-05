@@ -1,12 +1,26 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
-metadata: 
-  name: nginx-pvc
+metadata:
+  name: nginx-nfs-pvc
   namespace: default
-spec: 
-  accessModes: 
+spec:
+  accessModes:
     - ReadWriteOnce
   storageClassName: nginx-sc
-  resources: 
-    requests: 
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-longhorn-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: longhorn
+  resources:
+    requests:
       storage: 10Gi

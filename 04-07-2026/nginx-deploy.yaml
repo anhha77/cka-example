@@ -1,81 +1,86 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
+metadata:
   name: nginx
   namespace: default
-  labels: 
+  labels:
     app: nginx
-spec: 
-  replicas: 1
-  selector: 
-    matchLabels: 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
       app: nginx
-  template: 
-    metadata: 
-      labels: 
+  template:
+    metadata:
+      labels:
         app: nginx
-    spec: 
-      containers: 
+    spec:
+      containers:
         - name: nginx
           image: nginx:1.27
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
-          volumeMounts: 
+          volumeMounts:
             - name: nginx-config
               mountPath: /usr/share/nginx/html/index.html
               subPath: index.html
-            - name: nginx-pvc
-              mountPath: /usr/share/nginx/html/data
-      volumes: 
-        - name: nginx-config 
-          configMap: 
+            - name: nginx-nfs-pvc
+              mountPath: /usr/share/nginx/html/data-nfs
+            - name: nginx-longhorn-pvc
+              mountPath: /usr/share/nginx/html/data-longhorn
+      volumes:
+        - name: nginx-config
+          configMap:
             name: nginx-config
-            items: 
+            items:
               - key: index.html
                 path: index.html
-        - name: nginx-pvc
-          persistentVolumeClaim: 
-            claimName: nginx-pvc
+        - name: nginx-nfs-pvc
+          persistentVolumeClaim:
+            claimName: nginx-nfs-pvc
+        - name: nginx-longhorn-pvc
+          persistentVolumeClaim:
+            claimName: nginx-longhorn-pvc
 ---
 apiVersion: v1
 kind: Service
-metadata: 
-  name: nginx 
+metadata:
+  name: nginx
   namespace: default
-  labels: 
-    app: nginx 
-spec: 
-  ports: 
+  labels:
+    app: nginx
+spec:
+  ports:
     - name: http
       port: 443
       targetPort: 80
-  selector: 
+  selector:
     app: nginx
   type: ClusterIP
 ---
-apiVersion: networking.k8s.io/v1 
-kind: Ingress 
-metadata: 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: nginx
-  namespace: default 
-  annotations: 
+  namespace: default
+  annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-spec: 
+spec:
   ingressClassName: "nginx"
-  tls: 
-    - hosts: 
+  tls:
+    - hosts:
         - anhhm.kbuor.tech
       secretName: nginx-tls
-  rules: 
+  rules:
     - host: anhhm.kbuor.tech
-      http: 
-        paths: 
+      http:
+        paths:
           - path: /
             pathType: Prefix
-            backend: 
-              service: 
+            backend:
+              service:
                 name: nginx
-                port: 
+                port:
                   number: 443

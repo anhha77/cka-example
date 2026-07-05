@@ -1,13 +1,13 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
-metadata: 
+metadata:
   name: nginx-sc
 provisioner: nfs.csi.k8s.io
-parameters: 
-  server: 10.0.0.165
+parameters:
+  server: 10.0.0.133
   share: /mnt/nfs-server
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
-mountOptions: 
-  - hard 
+mountOptions:
+  - hard
   - nfsvers=4.1
