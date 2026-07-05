@@ -99,6 +99,7 @@ lsblk
 ## Format disk
 
 ```
+mkdir /mnt/nfs-server
 mkfs -t ext4 /dev/sdb1
 ```
 
