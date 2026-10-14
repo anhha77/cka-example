@@ -164,7 +164,7 @@ sudo apt -y install nfs-kernel-server
 Then config the /etc/exports file in nfs server
 
 ```
-sudo nano /etc/fstab
+sudo nano /etc/exports
 ```
 
 The access control list for filesystems exported to NFS clients. See `exports(5)`.
